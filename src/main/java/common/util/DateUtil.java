@@ -158,18 +158,7 @@ public class DateUtil {
 		return Date.from(dateTime.toInstant(ZoneOffset.of("+8")));
 	}
 	
-	public static List<LocalDateTime> splitTime(LocalDateTime startTime,LocalDateTime endTime,Long interval,ChronoUnit type) {
-		List<LocalDateTime> list = new ArrayList<LocalDateTime>();
-		if(startTime.isBefore(endTime)) {
-			LocalDateTime change = plus(startTime, interval, type);
-		}
-		return null;
-	}
-	private static LocalDateTime integerDateTime(LocalDateTime dateTime,Long limit,ChronoField field,Boolean type) {
-		int fie = dateTime.get(field);
-		
-		return null;
-	}
+	
 	
 	public static void main(String[] args) {
 		LocalDate now = LocalDate.now();
