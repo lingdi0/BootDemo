@@ -1,5 +1,6 @@
 package common.util;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -157,14 +158,4 @@ public class DateUtil {
 	public static Date toDate(LocalDateTime dateTime) {
 		return Date.from(dateTime.toInstant(ZoneOffset.of("+8")));
 	}
-	
-	
-	
-	public static void main(String[] args) {
-		LocalDate now = LocalDate.now();
-		LocalDateTime now2 = LocalDateTime.now();
-		System.out.println(now2.get(ChronoField.DAY_OF_MONTH));
-		System.out.println(plus(now, 5L, ChronoUnit.DAYS));
-	}
-
 }
