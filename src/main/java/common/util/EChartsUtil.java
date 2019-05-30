@@ -6,11 +6,10 @@ import com.github.abel533.echarts.Option;
 import com.github.abel533.echarts.axis.LogAxis;
 import com.github.abel533.echarts.axis.ValueAxis;
 import com.github.abel533.echarts.code.AxisType;
-import com.github.abel533.echarts.code.SeriesType;
+import com.github.abel533.echarts.json.GsonOption;
 import com.github.abel533.echarts.json.GsonUtil;
 import com.github.abel533.echarts.json.OptionUtil;
 import com.github.abel533.echarts.series.Line;
-import com.github.abel533.echarts.series.Series;
 
 /** 
 * @date 2019-05-28 17:39:31
@@ -21,7 +20,7 @@ import com.github.abel533.echarts.series.Series;
 public class EChartsUtil {
 	
 	public static void main(String[] args) {
-		Option option = new Option();
+		GsonOption option = new GsonOption();
 		LogAxis logAxis = new LogAxis();
 		option.setxAxis(Arrays.asList(logAxis));
 		logAxis.setType(AxisType.category);
@@ -31,9 +30,9 @@ public class EChartsUtil {
 		valueAxis.setType(AxisType.value);
 		Line line = new Line();
 		line.setData(Arrays.asList(820, 932, 901, 934, 1290, 1330, 1320));
-		line.setType(SeriesType.line);
+//		line.setType(SeriesType.line);
 		option.setSeries(Arrays.asList(line));
-		System.out.println(GsonUtil.format(option));
+		System.out.println(option.toString());
 	}
 
 }
