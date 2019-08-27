@@ -1,8 +1,10 @@
 package common.util;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.github.abel533.echarts.Option;
+import com.github.abel533.echarts.axis.CategoryAxis;
 import com.github.abel533.echarts.axis.LogAxis;
 import com.github.abel533.echarts.axis.ValueAxis;
 import com.github.abel533.echarts.code.AxisType;
@@ -10,6 +12,7 @@ import com.github.abel533.echarts.json.GsonOption;
 import com.github.abel533.echarts.json.GsonUtil;
 import com.github.abel533.echarts.json.OptionUtil;
 import com.github.abel533.echarts.series.Line;
+import com.github.abel533.echarts.style.AreaStyle;
 
 /** 
 * @date 2019-05-28 17:39:31
@@ -19,20 +22,26 @@ import com.github.abel533.echarts.series.Line;
 
 public class EChartsUtil {
 	
-	public static void main(String[] args) {
+	public static GsonOption getLineOption(List xAxis,List data) {
 		GsonOption option = new GsonOption();
-		LogAxis logAxis = new LogAxis();
-		option.setxAxis(Arrays.asList(logAxis));
-		logAxis.setType(AxisType.category);
-		logAxis.setData(Arrays.asList("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"));
+		CategoryAxis categoryAxis = new CategoryAxis();
+		categoryAxis.setType(AxisType.category);
+		categoryAxis.setData(xAxis);
+		categoryAxis.setBoundaryGap(false);
+		option.setxAxis(Arrays.asList(categoryAxis));
 		ValueAxis valueAxis = new ValueAxis();
 		option.setyAxis(Arrays.asList(valueAxis));
-		valueAxis.setType(AxisType.value);
 		Line line = new Line();
-		line.setData(Arrays.asList(820, 932, 901, 934, 1290, 1330, 1320));
-//		line.setType(SeriesType.line);
+		line.setData(data);
+		line.setAreaStyle(new AreaStyle());
 		option.setSeries(Arrays.asList(line));
-		System.out.println(option.toString());
+		return option;
+	}
+	
+	public static void main(String[] args) {
+		List xAxis = Arrays.asList(1,2,3,4,5,6,7);
+		List data = Arrays.asList(100,200,50,450,268,487,120);
+		System.out.println(getLineOption(xAxis, data).toString());
 	}
 
 }
