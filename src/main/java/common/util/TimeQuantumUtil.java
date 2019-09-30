@@ -5,6 +5,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import common.util.databean.TimeQuantum;
 
 
 /** 
@@ -15,35 +18,7 @@ import java.util.List;
 
 public class TimeQuantumUtil {
 	
-	/**
-	 * 时间段类  内部数据类
-	 * @date 2019年8月27日 下午3:42:41
-	 * @author lj
-	 * TODO
-	 */
-	private static class TimeQuantum{
-		private LocalDateTime start;
-		private LocalDateTime end;
-		public LocalDateTime getStart() {
-			return start;
-		}
-		public TimeQuantum setStart(LocalDateTime start) {
-			this.start = start;
-			return this;
-		}
-		public LocalDateTime getEnd() {
-			return end;
-		}
-		public TimeQuantum setEnd(LocalDateTime end) {
-			this.end = end;
-			return this;
-		}
-		@Override
-		public String toString() {
-			return "TimeQuantum [start=" + start + ", end=" + end + "]";
-		}
-		
-	}
+	
 	/**
 	 * 判断时间是否在时间段内
 	 * @param time
@@ -52,9 +27,10 @@ public class TimeQuantumUtil {
 	 */
 	public static boolean isBetween(LocalDateTime time,TimeQuantum timeQuantum) {
 		if(timeQuantum.getStart().isAfter(timeQuantum.getEnd())) {
-			return false;
+			throw new IllegalArgumentException("开始时间大于结束时间");
 		}
-		return !time.isBefore(timeQuantum.getStart())&&time.isBefore(timeQuantum.getEnd());
+		long minutes;
+		return (minutes=ChronoUnit.MINUTES.between(timeQuantum.getStart(), time))>0?minutes<=ChronoUnit.MINUTES.between(timeQuantum.getStart(), timeQuantum.getEnd()):false;
 	}
 	/**
 	 * 合并时间段
@@ -82,10 +58,7 @@ public class TimeQuantumUtil {
 						break;
 					}
 					TimeQuantum target = list.get(j);
-					if(isBetween(source.getStart(), target)
-							||isBetween(target.getStart(), source)
-							||target.getStart().equals(source.getEnd())
-							||source.getStart().equals(target.getEnd())){
+					if(isCover(source, target)){
 						target.setStart(source.getStart().isBefore(target.getStart())?source.getStart():target.getStart());
 						target.setEnd(source.getEnd().isAfter(target.getEnd())?source.getEnd():target.getEnd());
 						list.remove(i);
@@ -159,13 +132,27 @@ public class TimeQuantumUtil {
 		return minutes;
 	}
 	
+	public static boolean isIndependent(TimeQuantum t1,TimeQuantum t2) {
+		Objects.requireNonNull(t1);
+		Objects.requireNonNull(t2);
+		if(t1.getEnd().isBefore(t1.getStart())||t2.getEnd().isBefore(t2.getStart())) {
+			throw new IllegalArgumentException("开始时间大于结束时间");
+		}
+		long minutes1 = ChronoUnit.MINUTES.between(t1.getStart(), t1.getEnd());
+		long minutes2 = ChronoUnit.MINUTES.between(t2.getStart(), t2.getEnd());
+		return ChronoUnit.MINUTES.between(t1.getStart(), t2.getStart())>minutes1||ChronoUnit.MINUTES.between(t2.getStart(), t1.getStart())>minutes2;
+	}
+	public static boolean isCover(TimeQuantum t1,TimeQuantum t2) {
+		return !isIndependent(t1, t2);
+	}
+	
 	public static void main(String[] args) {
 		LocalDateTime d1 = LocalDateTime.parse("2019-08-27T12:00:00");
 		LocalDateTime d2 = LocalDateTime.parse("2019-08-27T15:00:00");
 		LocalDateTime d3 = LocalDateTime.parse("2019-08-27T15:30:00");
 		LocalDateTime d4 = LocalDateTime.parse("2019-08-27T17:00:00");
-		LocalDateTime d5 = LocalDateTime.parse("2019-08-27T12:00:00");
-		LocalDateTime d6 = LocalDateTime.parse("2019-08-27T17:00:00");
+		LocalDateTime d5 = LocalDateTime.parse("2019-08-27T11:00:00");
+		LocalDateTime d6 = LocalDateTime.parse("2019-08-27T15:00:00");
 		TimeQuantum t1 = new TimeQuantum().setStart(d1).setEnd(d2);
 		TimeQuantum t2 = new TimeQuantum().setStart(d3).setEnd(d4);
 		TimeQuantum t3 = new TimeQuantum().setStart(d5).setEnd(d6);
@@ -174,8 +161,18 @@ public class TimeQuantumUtil {
 		list.add(t1);
 		list.add(t2);
 		list2.add(t3);
-		System.out.println(TimeQuantumUtil.sub(list,list2));
-		System.out.println(calMinutes(list2));
+		System.out.println(isIndependent(new TimeQuantum(d1.plusHours(0), d1.plusHours(2)), new TimeQuantum(d1.plusHours(3), d1.plusHours(4))));
+		System.out.println(isIndependent(new TimeQuantum(d1.plusHours(0), d1.plusHours(2)), new TimeQuantum(d1.plusHours(2), d1.plusHours(4))));
+		System.out.println(isIndependent(new TimeQuantum(d1.plusHours(0), d1.plusHours(2)), new TimeQuantum(d1.plusHours(1), d1.plusHours(4))));
+		System.out.println(isIndependent(new TimeQuantum(d1.plusHours(0), d1.plusHours(2)), new TimeQuantum(d1.plusHours(0), d1.plusHours(4))));
+		System.out.println(isIndependent(new TimeQuantum(d1.plusHours(0), d1.plusHours(2)), new TimeQuantum(d1.plusHours(-1), d1.plusHours(4))));
+		
+		System.out.println(isIndependent(new TimeQuantum(d1.plusHours(3), d1.plusHours(4)), new TimeQuantum(d1.plusHours(0), d1.plusHours(2))));
+		System.out.println(isIndependent(new TimeQuantum(d1.plusHours(2), d1.plusHours(4)), new TimeQuantum(d1.plusHours(0), d1.plusHours(2))));
+		System.out.println(isIndependent(new TimeQuantum(d1.plusHours(1), d1.plusHours(4)), new TimeQuantum(d1.plusHours(0), d1.plusHours(2))));
+		System.out.println(isIndependent(new TimeQuantum(d1.plusHours(0), d1.plusHours(4)), new TimeQuantum(d1.plusHours(0), d1.plusHours(2))));
+		System.out.println(isIndependent(new TimeQuantum(d1.plusHours(-1), d1.plusHours(4)), new TimeQuantum(d1.plusHours(0), d1.plusHours(2))));
+				
 	}
 
 }

@@ -2,12 +2,20 @@ package com.example.demo.web;
 
 import java.util.Map;
 
-import javax.websocket.server.PathParam;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.exception.OwnException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /** 
@@ -18,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 public class ApiWeb {
 	
+	@SuppressWarnings("rawtypes")
 	@RequestMapping("start")
 	public Object start() throws Exception {
 		ObjectMapper om = new ObjectMapper();
@@ -33,7 +42,30 @@ public class ApiWeb {
 	
 	@RequestMapping("test/{b}")
 	public Object test2(@PathVariable("b")String b) throws Exception {
-		return "b"+b;
+		return "bsdjfks"+b;
+	}
+	
+	@RequestMapping("kk")
+	public ResponseEntity<?> kk(HttpServletRequest request,HttpServletResponse response,MultipartFile file) {
+		HttpSession session = request.getSession();
+		String s = session.getAttribute("username")==null?"default":(String) session.getAttribute("username");
+		session.setAttribute("username", "zero");
+		session.setMaxInactiveInterval(60);
+		Cookie cookie = new Cookie("username", session.getId());
+		cookie.setMaxAge(1*60);
+		response.addCookie(cookie);
+		return new ResponseEntity<String>(s, HttpStatus.BAD_REQUEST);
+	}
+	
+	@RequestMapping("cookie")
+	public ResponseEntity<?> getcookie(@CookieValue(name = "username",defaultValue = "aha")String username){
+		return ResponseEntity.status(HttpStatus.OK).body("your cookie:"+username);
+	}
+	
+	@RequestMapping("exception")
+	public Object getException() {
+//		throw new OwnException().RESOURCE_NOT_EXSIT;
+		throw new RuntimeException("o");
 	}
 
 }
