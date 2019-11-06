@@ -2,6 +2,7 @@ package common.util;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -149,5 +150,13 @@ public class DateUtil {
 	 */
 	public static Date toDate(LocalDateTime dateTime) {
 		return Date.from(dateTime.toInstant(ZoneOffset.of("+8")));
+	}
+	
+	public static LocalDateTime timestampToDateTime(long timestamp) {
+		return LocalDateTime.ofEpochSecond(timestamp/1000, 0, OffsetDateTime.now().getOffset());
+	}
+	
+	public static long DateTimeToTimestamp(LocalDateTime datetime) {
+		return datetime.toInstant(OffsetDateTime.now().getOffset()).getEpochSecond();
 	}
 }
