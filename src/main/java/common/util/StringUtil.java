@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 */
 
 public class StringUtil {
+	
 	/**
      * <p>Checks if a CharSequence is empty (""), null or whitespace only.</p>
      *

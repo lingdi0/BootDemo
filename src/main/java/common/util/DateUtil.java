@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalField;
 import java.util.Date;
 
 /** 
@@ -15,7 +17,7 @@ import java.util.Date;
 */
 
 public class DateUtil {
-	private static final String DEFAULT_TIME_FORMAT="yyyy-MM-dd HH:mm:ss";
+	private static final String DEFAULT_DATETIME_FORMAT="yyyy-MM-dd HH:mm:ss";
 	
 	/**
 	 * date -> string(yyyy-MM-dd)
@@ -41,7 +43,7 @@ public class DateUtil {
 	 * @return
 	 */
 	public static String dateToString(LocalDateTime dateTime) {
-		return dateToString(dateTime,DEFAULT_TIME_FORMAT);
+		return dateToString(dateTime,DEFAULT_DATETIME_FORMAT);
 	}
 	/**
 	 * dateTime -> string(format)
@@ -75,7 +77,7 @@ public class DateUtil {
 	 * @return
 	 */
 	public static LocalDateTime stringToDateTime(String dateTime) {
-		return stringToDateTime(dateTime,DEFAULT_TIME_FORMAT);
+		return stringToDateTime(dateTime,DEFAULT_DATETIME_FORMAT);
 	}
 	/**
 	 * string(format) -> dateTime
@@ -158,5 +160,9 @@ public class DateUtil {
 	
 	public static long DateTimeToTimestamp(LocalDateTime datetime) {
 		return datetime.toInstant(OffsetDateTime.now().getOffset()).getEpochSecond();
+	}
+	
+	public static LocalDateTime currentDateTime() {
+		return LocalDateTime.now().withNano(0);
 	}
 }

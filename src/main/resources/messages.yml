@@ -1,0 +1,11 @@
+input:
+  email:
+    error: 邮箱格式错误,请重新输入!
+  telphone:
+    error: 电话号码格式错误，请重新输入!
+resource:
+  not:
+    exsit: 资源不存在！
+sys:
+  inner:
+    error: 系统内部错误！
