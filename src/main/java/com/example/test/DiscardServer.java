@@ -16,7 +16,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 */
 
 public class DiscardServer {
-private int port;
+	
+	private int port;
     
     public DiscardServer(int port) {
         this.port = port;
@@ -32,7 +33,7 @@ private int port;
              .childHandler(new ChannelInitializer<SocketChannel>() { // 
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
-                     ch.pipeline().addLast(new EchoServerHandler());
+                     ch.pipeline().addLast(new TimeEncoder(),new DiscardServerHandler(),new TimeServerHandler());
                  }
              })
              .option(ChannelOption.SO_BACKLOG, 128)          // 等待超时

@@ -16,12 +16,16 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) { // (2)
 		ByteBuf in = (ByteBuf) msg;
+		ByteBuf out = in.copy();
+		ByteBuf out2 = ctx.alloc().buffer(7);
+		out2.writeBytes("tian天".getBytes());
 	    try {
 	        while (in.isReadable()) {
 	            System.out.print((char) in.readByte());
 	            System.out.flush();
 	        }
-	        ctx.writeAndFlush("123");
+	        
+	        ctx.writeAndFlush(out2);
 	    }finally {
             ReferenceCountUtil.release(msg);
         }
